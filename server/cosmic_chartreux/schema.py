@@ -15,8 +15,14 @@ class AgentSchema(Schema):
 
 
 class DiskSchema(Schema):
+    id = fields.Integer()
     agent = AgentSchema()
     mountpoint = fields.String()
+
+
+class StatisticSchema(Schema):
+    id = fields.Integer()
+    disk = DiskSchema()
     total = fields.String()
     free = fields.String()
     used = fields.String()

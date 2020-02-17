@@ -45,6 +45,18 @@ class Disk(BaseModel):
     agent = relationship(Agent, backref=backref("disks"))
 
     mountpoint = Column(String(length=300))
+
+
+class DiskStatistic(BaseModel):
+    """
+
+    """
+
+    __tablename__ = "statistics"
+
+    disk_id = Column(Integer, ForeignKey(Disk.id), nullable=False)
+    disk = relationship(Disk, backref=backref("statistics"))
+
     total = Column(Float)
     used = Column(Float)
     free = Column(Float)

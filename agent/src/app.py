@@ -11,7 +11,7 @@ from src.utils import get_hostname, get_mac_addr, get_ip_addr
 
 class Client:
     login_url = urljoin(API_URL, "auth/login/")
-    disk_usage_url = urljoin(API_URL, "disk-statictics/")
+    disk_usage_url = urljoin(API_URL, "disks/")
 
     headers = {"Authorization": ""}
 
