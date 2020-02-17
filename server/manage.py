@@ -1,4 +1,4 @@
-from cosmic_chartreux.app import create_app
+from os_cleaner.app import create_app
 
 
 application = create_app()
