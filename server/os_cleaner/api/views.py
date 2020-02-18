@@ -2,8 +2,8 @@ from flask import Flask, g, request
 from flask_restplus import Api, Resource
 
 from os_cleaner.db import db
-from os_cleaner.models import Disk, Tasks, Agent
-from os_cleaner.schema import DiskSchema, QueryParamsSchema, TasksSchema, AgentSchema, AllSchema
+from os_cleaner.models import Disks, Tasks, Agent
+from os_cleaner.schema import DisksSchema, QueryParamsSchema, TasksSchema, AgentSchema, AllSchema
 from os_cleaner.utils import agent_login_required
 
 api = Api(prefix="/api")
@@ -14,26 +14,46 @@ class Auth(Resource):
     def post(self):
         return {"access": ""}
 
+@api.route("/agent/")
+class Host(Resource):
 
-@api.route("/disk-statistics/")
-class DisksListCreate(Resource):
     def get(self):
         query_params = QueryParamsSchema().dump(request.args)
 
-        query = Disk.query
+        query = Agent.query
         count = query.count()
 
         query = query.limit(query_params["limit"]).offset(query_params["offset"])
 
-        schema = DiskSchema().dump(query, many=True)
+        schema = AgentSchema().dump(query, many=True)
+
+        return {"count": count, "results": schema}
+
+    def post(self):
+
+        for item in request.json:
+            db.session.add(Agent(**item['data']))
+            db.session.commit()
+
+@api.route("/disks/")
+class DisksListCreate(Resource):
+    def get(self):
+        query_params = QueryParamsSchema().dump(request.args)
+
+        query = Disks.query
+        count = query.count()
+
+        query = query.limit(query_params["limit"]).offset(query_params["offset"])
+
+        schema = DisksSchema().dump(query, many=True)
         return {"count": count, "results": schema}
 
     @agent_login_required
     def post(self):
         agent_id = g.agent_id
 
-        for item in request.json:
-            db.session.add(Disk(agent_id=agent_id, **item))
+        for item in request.json[0]['data']:
+            db.session.add(Disks(agent_id=agent_id, **item))
             db.session.commit()
 
 
@@ -56,7 +76,7 @@ class TasksResult(Resource):
         agent_id = g.agent_id
 
         for item in request.json:
-            db.session.add(Tasks(agent_id = agent_id, **item))
+            db.session.add(Tasks(agent_id = agent_id, **item['data']))
             db.session.commit()
 
 
