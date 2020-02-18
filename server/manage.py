@@ -1,8 +1,8 @@
 from os_cleaner.app import create_app
-
+from config import *
 
 application = create_app()
 
 
 if __name__ == "__main__":
-    application.run(port=5001, debug=True)
+    application.run(host=HOST, port=PORT, debug=True)
